@@ -1,0 +1,39 @@
+name: Publish dev package
+
+on:
+  push:
+    branches: [ivan-integrated]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        run: |
+          git init .
+          git remote add origin ${{ github.server_url }}/${{ github.repository }}.git
+          git fetch --depth=1 origin ${{ github.sha }}
+          git checkout FETCH_HEAD
+
+      - name: Build
+        run: dotnet build Fun.Blazor/Fun.Blazor.fsproj -c Release --nologo
+
+      - name: Pack (dev pre-release)
+        run: |
+          # Use UTC timestamp as the dev identifier — strictly monotonic so
+          # downstream floating consumers (Version="X.*") always pick the
+          # newest build. Short shas would sort lexically.
+          TIMESTAMP="$(date -u +%Y%m%d%H%M%S)"
+          BASE_VERSION="$(grep -m1 '<Version>' Fun.Blazor/Fun.Blazor.fsproj | sed -E 's/.*<Version>([^<]+)<\/Version>.*/\1/')"
+          dotnet pack Fun.Blazor/Fun.Blazor.fsproj -c Release --nologo --no-build \
+            -o artifacts/ \
+            -p:Version="${BASE_VERSION}.${TIMESTAMP}"
+
+      - name: Push to Forgejo NuGet feed
+        run: |
+          for pkg in artifacts/*.nupkg; do
+            dotnet nuget push "$pkg" \
+              --source https://forgejo.ivanthegeek.com/api/packages/IvanTheGeek/nuget/index.json \
+              --api-key "${{ secrets.NUGET_PUBLISH_TOKEN }}" \
+              --skip-duplicate
+          done

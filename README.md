@@ -1,5 +1,13 @@
 # Fun.Blazor [![Nuget](https://img.shields.io/nuget/vpre/Fun.Blazor)](https://www.nuget.org/packages/Fun.Blazor)
 
+> Patched build of [slaveOftime/Fun.Blazor](https://github.com/slaveOftime/Fun.Blazor) distributed via Forgejo. Tracks upstream master with overlay-fork fixes pending upstream merge.
+>
+> **Upstream sources** (click through to view on GitHub):
+> - [github.com/slaveOftime/Fun.Blazor](https://github.com/slaveOftime/Fun.Blazor) — the original library this fork tracks
+> - [github.com/slaveOftime/Fun.Css](https://github.com/slaveOftime/Fun.Css) — the typed CSS library Fun.Blazor depends on
+>
+> See [CHANGELOG.md](./CHANGELOG.md) for the patches included on top of upstream.
+
 ![image](./Docs//assets/fun-blazor%3D.png)
 
 This is a project to make F# developer to write blazor easier.

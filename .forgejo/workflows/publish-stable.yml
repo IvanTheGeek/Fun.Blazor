@@ -1,0 +1,36 @@
+name: Publish stable package
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        run: |
+          git init .
+          git remote add origin ${{ github.server_url }}/${{ github.repository }}.git
+          git fetch --depth=1 origin ${{ github.sha }}
+          git checkout FETCH_HEAD
+
+      - name: Build
+        run: dotnet build Fun.Blazor/Fun.Blazor.fsproj -c Release --nologo
+
+      - name: Pack (stable — version from tag)
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          dotnet pack Fun.Blazor/Fun.Blazor.fsproj -c Release --nologo --no-build \
+            -o artifacts/ \
+            -p:Version="${VERSION}"
+
+      - name: Push to Forgejo NuGet feed
+        run: |
+          for pkg in artifacts/*.nupkg; do
+            dotnet nuget push "$pkg" \
+              --source https://forgejo.ivanthegeek.com/api/packages/IvanTheGeek/nuget/index.json \
+              --api-key "${{ secrets.NUGET_PUBLISH_TOKEN }}" \
+              --skip-duplicate
+          done

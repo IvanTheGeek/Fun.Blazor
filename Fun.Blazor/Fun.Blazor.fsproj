@@ -5,6 +5,13 @@
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<TrimMode>link</TrimMode>
 		<IsTrimmable>true</IsTrimmable>
+		<PackageId>Fun.Blazor</PackageId>
+		<Version>4.1.10-IvanTheGeek.1</Version>
+		<Authors>slaveOftime; IvanTheGeek</Authors>
+		<Description>Personal patched build of slaveOftime/Fun.Blazor with overlay-fork fixes pending upstream merge. Tracks upstream master with additional patches.</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryUrl>https://forgejo.ivanthegeek.com/IvanTheGeek/Fun.Blazor</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
 	</PropertyGroup>
 
 	<ItemGroup>
