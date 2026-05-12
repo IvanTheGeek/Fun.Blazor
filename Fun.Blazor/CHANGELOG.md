@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## 4.1.10-IvanTheGeek.2 - 2026-05-12
+
+- Shift target frameworks: drop net6.0 (EOL 2024-11-12), add net10.0
+- Matrix now: net8.0;net9.0;net10.0
+
 ## [4.1.10] - 2026-01-08
 
 - Support `lazyValidate` for AdaptiveForm and UseAdaptiveForm
