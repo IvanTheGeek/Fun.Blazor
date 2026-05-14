@@ -133,7 +133,6 @@ type FunFragmentComponent() as this =
     member val Fragment = NodeRenderFragment(fun _ _ i -> i) with get, set
 
 
-#if !NET6_0
 /// Wrapper class to make a function style component to be streamable
 [<StreamRendering>]
 type FunStreamingComponent() =
@@ -161,4 +160,3 @@ type FunInteractiveWebAssemblyAttribute() =
     inherit RenderModeAttribute()
 
     override _.Mode = Web.RenderMode.InteractiveWebAssembly
-#endif

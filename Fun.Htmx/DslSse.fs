@@ -1,7 +1,6 @@
 ﻿[<AutoOpen>]
 module rec Fun.Htmx.DslSse
 
-#if NET8_0_OR_GREATER
 
 open System
 open Microsoft.AspNetCore.Http
@@ -211,4 +210,3 @@ type HxSseComponent() as this =
                 hxSwap_innerHTML
             }
 
-#endif

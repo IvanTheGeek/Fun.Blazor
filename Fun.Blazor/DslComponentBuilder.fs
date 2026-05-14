@@ -117,7 +117,6 @@ type ComponentBuilder<'T when 'T :> Microsoft.AspNetCore.Components.IComponent>(
          ))
 
 
-#if !NET6_0
     [<CustomOperation("renderMode")>]
     member inline _.renderMode([<InlineIfLambda>] render: AttrRenderFragment, mode: IComponentRenderMode) =
         (render,
@@ -174,7 +173,6 @@ type ComponentBuilder<'T when 'T :> Microsoft.AspNetCore.Components.IComponent>(
     /// Blazor's enhanced navigation and form handing may undo dynamic changes to the DOM if the updated content isn't part of the server rendering. To preserve the content of an element, use the data-permanent attribute.
     [<CustomOperation("dataPermanent")>]
     member inline this.dataPermanent([<InlineIfLambda>] render: AttrRenderFragment) = this.dataPermanent (render, true)
-#endif
 
 
     [<CustomOperation("callback")>]
@@ -472,7 +470,6 @@ type ComponentWithDomAttrBuilder<'T when 'T :> IComponent>() =
          ))
 
 
-#if !NET6_0
     [<CustomOperation("renderMode")>]
     member inline _.renderMode([<InlineIfLambda>] render: AttrRenderFragment, mode: IComponentRenderMode) =
         (render,
@@ -510,7 +507,6 @@ type ComponentWithDomAttrBuilder<'T when 'T :> IComponent>() =
     [<CustomOperation("interactiveWebAssembly")>]
     member inline this.interactiveWebAssembly(renders: (AttrRenderFragment * PostRenderFragment)) =
         this.renderMode (renders, RenderMode.InteractiveWebAssembly)
-#endif
 
 
     member inline _.Delay([<InlineIfLambda>] fn: unit -> (AttrRenderFragment * PostRenderFragment)) = fn ()

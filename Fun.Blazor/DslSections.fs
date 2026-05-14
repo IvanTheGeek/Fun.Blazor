@@ -1,7 +1,6 @@
 [<AutoOpen>]
 module Fun.Blazor.DslSections
 
-#if !NET6_0
 open System.Diagnostics.CodeAnalysis
 open Microsoft.AspNetCore.Components.Sections
 open Operators
@@ -33,4 +32,3 @@ type SectionContent' [<DynamicDependency(DynamicallyAccessedMemberTypes.All, typ
 
 let SectionOutlet'' = SectionOutlet'()
 let SectionContent'' = SectionContent'()
-#endif

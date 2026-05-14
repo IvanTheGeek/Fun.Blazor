@@ -14,10 +14,8 @@ open Microsoft.AspNetCore.Routing
 open Microsoft.AspNetCore.Mvc.Rendering
 open Microsoft.AspNetCore.Antiforgery
 open Microsoft.AspNetCore.Components
-#if !NET6_0
 open Microsoft.AspNetCore.Http.HttpResults
 open Microsoft.AspNetCore.Components.Endpoints
-#endif
 open Microsoft.AspNetCore.Mvc.ViewFeatures
 open Microsoft.Extensions.DependencyInjection
 open Fun.Result
@@ -25,7 +23,6 @@ open Fun.Blazor
 open Fun.Blazor.Operators
 
 
-#if !NET6_0
 type FunBlazorEndpointFilter(preventStreamingRendering: bool, statusCode: int) =
     interface IEndpointFilter with
         member _.InvokeAsync(ctx, next) =
@@ -40,7 +37,6 @@ type FunBlazorEndpointFilter(preventStreamingRendering: bool, statusCode: int) =
                 | x -> return x
             }
             |> ValueTask<obj>
-#endif
 
 module internal Utils =
     let mutable isRazorComponentsForSSRMapped = false
@@ -61,11 +57,9 @@ module internal Utils =
             |}>
                 ())
 
-#if !NET6_0
 type internal RequiresAntiforgeryMetadata(?requires) =
     interface IAntiforgeryMetadata with
         member _.RequiresValidation = defaultArg requires true
-#endif
 
 
 [<Extension>]
@@ -80,7 +74,6 @@ type FunBlazorServerExtensions =
             .AddSingleton<IGlobalStore, GlobalStore>()
 
 
-#if !NET6_0
     static member internal MapRenderMode(renderMode) =
         match renderMode with
         | RenderMode.Static -> null :> IComponentRenderMode
@@ -89,7 +82,6 @@ type FunBlazorServerExtensions =
         | RenderMode.WebAssembly -> Web.InteractiveWebAssemblyRenderMode(prerender = false)
         | RenderMode.WebAssemblyPrerendered -> Web.InteractiveWebAssemblyRenderMode(prerender = true)
         | _ -> failwith $"Unsupported render mode {renderMode}"
-#endif
 
 
     static member internal MakeRequestDelegate<'Services>(render: 'Services -> Task<NodeRenderFragment>, ?renderMode) =
@@ -121,7 +113,6 @@ type FunBlazorServerExtensions =
 
             (htmlHelper :?> IViewContextAware).Contextualize(viewContext)
 
-#if !NET6_0
             let componentPrerenderer = ctx.RequestServices.GetService<IComponentPrerenderer>()
             let renderMode = FunBlazorServerExtensions.MapRenderMode renderMode
             let parameters =
@@ -131,10 +122,6 @@ type FunBlazorServerExtensions =
             let! result = componentPrerenderer.PrerenderComponentAsync(ctx, componentType, renderMode, parameters)
             do! result.WriteToAsync(targetStream)
 
-#else
-            let! result = htmlHelper.RenderComponentAsync(componentType, renderMode, parameters)
-            result.WriteTo(targetStream, HtmlEncoder.Default)
-#endif
         }
 
 
@@ -163,7 +150,6 @@ type FunBlazorServerExtensions =
     }
 
 
-#if !NET6_0
     /// So we can handle NodeRenderFragment which returned from pipeline result
     [<Extension>]
     static member AddFunBlazor<'TBuilder when 'TBuilder :> IEndpointConventionBuilder>
@@ -174,7 +160,6 @@ type FunBlazorServerExtensions =
         )
         =
         builder.AddEndpointFilter(FunBlazorEndpointFilter(defaultArg preventStreamingRendering false, defaultArg statusCode 200))
-#endif
 
     static member private MakeCreateAttrFn(ty: Type, ?forCustomElement) =
         let forCustomElement = defaultArg forCustomElement false
@@ -248,14 +233,10 @@ type FunBlazorServerExtensions =
             builder: IEndpointRouteBuilder,
             types: Type seq,
             ?notFoundNode: NodeRenderFragment
-#if !NET6_0
             , ?enableAntiforgery: bool
-#endif
         )
         =
-#if !NET6_0
         let enableAntiforgery = defaultArg enableAntiforgery false
-#endif
 
         types
         |> Seq.iter (fun x ->
@@ -267,7 +248,6 @@ type FunBlazorServerExtensions =
         )
 
         let builder =
-#if !NET6_0
             builder
                 .Map(
                     "/fun-blazor-server-side-render-components/{componentType}",
@@ -278,23 +258,9 @@ type FunBlazorServerExtensions =
                     )
                 )
                 .AddFunBlazor()
-#else
-            builder.Map(
-                "/fun-blazor-server-side-render-components/{componentType}",
-                Func<_, _, _>(fun (componentType: string) (ctx: HttpContext) ->
-                    match Utils.razorComponentsForSSRTypes.Value.TryGetValue(componentType) with
-                    | true, comp -> ctx.WriteFunDom(html.blazor (comp.Type, attr = comp.CreateAttr ctx), renderMode = RenderMode.Static)
-                    | _ -> ctx.WriteFunDom(defaultArg notFoundNode html.none, RenderMode.Static)
-                )
-            )
-#endif
 
-#if !NET6_0
         if enableAntiforgery then
             builder.WithMetadata(RequiresAntiforgeryMetadata()) |> ignore
-#else
-        ()
-#endif
 
     /// This will serve all blazor components (inherit from ComponentBase) in the target assembly for server side rendering
     /// route pattern: /fun-blazor-server-side-render-components/{componentType}.
@@ -305,21 +271,16 @@ type FunBlazorServerExtensions =
             builder: IEndpointRouteBuilder,
             assembly: Assembly,
             ?notFoundNode: NodeRenderFragment
-#if !NET6_0
             ,?enableAntiforgery: bool
-#endif
         )
         =
         builder.MapRazorComponentsForSSR(
             assembly.GetTypes() |> Seq.filter (fun x -> x.IsAssignableTo(typeof<IComponent>)),
             defaultArg notFoundNode html.none
-#if !NET6_0
             ,defaultArg enableAntiforgery false
-#endif
         )
 
 
-#if !NET6_0
     /// This will serve all components for server side rendering with custom element enabled.
     /// You should use it with: services.AddServerSideBlazor(fun options -> options.RootComponents.RegisterCustomElementForFunBlazor<YourComponent>()),
     /// route pattern: /fun-blazor-custom-elements/{componentType}
@@ -369,21 +330,14 @@ type FunBlazorServerExtensions =
             assembly.GetTypes()
             |> Seq.filter (fun ty -> ty.GetCustomAttribute<FunBlazorCustomElementAttribute>() |> box |> isNull |> not)
         builder.MapCustomElementsForSSR(types, defaultArg notFoundNode html.none, defaultArg enableAntiforgery false)
-#endif
 
 
     /// This will use MapFallback under the hood to capture all the routes for Fun.Blazor to use
     [<Extension>]
     static member MapFunBlazor(builder: IEndpointRouteBuilder, createFragment: HttpContext -> NodeRenderFragment, ?pattern) =
-#if !NET6_0
         match pattern with
         | Some x -> builder.MapFallback(x, Func<_, _>(createFragment)).AddFunBlazor()
         | None -> builder.MapFallback(Func<_, _>(createFragment)).AddFunBlazor()
-#else
-        match pattern with
-        | Some x -> builder.MapFallback(x, RequestDelegate(fun ctx -> ctx.WriteFunDom(createFragment ctx)))
-        | None -> builder.MapFallback(RequestDelegate(fun ctx -> ctx.WriteFunDom(createFragment ctx)))
-#endif
 
     /// This will use MapFallback under the hood to capture all the routes for Fun.Blazor to use
     [<Extension>]

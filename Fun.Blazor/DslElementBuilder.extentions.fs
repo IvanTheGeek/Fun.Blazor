@@ -5,13 +5,10 @@ open System.Reflection
 open Microsoft.AspNetCore.Components
 open Fun.Blazor
 
-#if !NET6_0
 open Fun.Blazor.Operators
 open Fun.Blazor.DslElementBuilder_generated
-#endif
 
 
-#if !NET6_0
 type EltBuilder_form with
 
     /// Enhanced form handling isn't hierarchical and doesn't flow to child forms:
@@ -40,7 +37,6 @@ type EltBuilder_form with
             builder.AddNamedEvent("onsubmit", value)
             nextIndex
         )
-#endif
 
 
 /// Put raw js into the script tag

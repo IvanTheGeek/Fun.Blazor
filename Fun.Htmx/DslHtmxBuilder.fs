@@ -77,7 +77,6 @@ type DomAttrBuilder with
         this.hxRequestBlazorSSR(render, HttpMethods.Post, queryBuilder)
 
 
-#if !NET6_0
     /// Issues a request to get the blazor custom element as the return dom, 
     /// and it will open a websocket for the component's interactivity
     [<CustomOperation "hxRequestCustomElement">]
@@ -122,7 +121,6 @@ type DomAttrBuilder with
     [<CustomOperation "hxPostCustomElement">]
     member inline this.hxPostCustomElement<'T>([<InlineIfLambda>] render: AttrRenderFragment, queryBuilder: QueryBuilder<'T>) =
         this.hxRequestCustomElement(render, HttpMethods.Post, queryBuilder)
-#endif
 
 
     /// Issues a GET request to the given URL

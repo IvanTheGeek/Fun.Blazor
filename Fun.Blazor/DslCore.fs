@@ -7,11 +7,9 @@ open Microsoft.AspNetCore.Components
 open Operators
 open Internal
 
-#if !NET6_0
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.AspNetCore.Components.Web
-#endif
 
 
 type html() =
@@ -144,7 +142,6 @@ type html() =
         html.blazor (typeof<'T>, attr = attrBuilder.Build())
 
 
-#if !NET6_0
     /// Make a blazor component to a render fragment with a render for attributes
     /// ```fsharp
     /// html.blazor<DemoComp> (RenderModeServer, domAttr {
@@ -191,7 +188,6 @@ type html() =
     /// For more information please go to https://learn.microsoft.com/en-us/aspnet/core/blazor/components/rendering?view=aspnetcore-8.0#streaming-rendering
     static member inline streaming(node: NodeRenderFragment) =
         html.blazor<FunStreamingComponent> (nameof Unchecked.defaultof<FunStreamingComponent>.Content => node)
-#endif
 
 
     /// Helper method to use 'Comp type to create an empty node for component
@@ -340,7 +336,6 @@ type html() =
         )
 
 
-#if !NET6_0
     /// Render a node as string, logging must be registered in the service collection
     static member renderAsString (serviceProvider: IServiceProvider) (node: NodeRenderFragment) = task {
         let loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>()
@@ -357,7 +352,6 @@ type html() =
                     Internal.dictionaryPool.Return dict
             })
     }
-#endif
 
 
 type Static =
