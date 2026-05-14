@@ -6,7 +6,7 @@
 		<TrimMode>link</TrimMode>
 		<IsTrimmable>true</IsTrimmable>
 		<PackageId>Fun.Blazor</PackageId>
-		<Version>4.1.10-IvanTheGeek.2</Version>
+		<Version>4.1.10-IvanTheGeek.3</Version>
 		<Authors>slaveOftime; IvanTheGeek</Authors>
 		<Description>Personal patched build of slaveOftime/Fun.Blazor with overlay-fork fixes pending upstream merge. Tracks upstream master with additional patches.</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -54,7 +54,7 @@
 	<ItemGroup>
 		<PackageReference Update="FSharp.Core" Version="6.0.0" />
 		<PackageReference Include="FSharp.Data.Adaptive" Version="1.2.15" />
-		<PackageReference Include="Fun.Css" Version="1.0.2" />
+		<PackageReference Include="Fun.Css" Version="1.0.3-IvanTheGeek.*" />
 		<PackageReference Include="Fun.Result" Version="2.1.0" />
 		<PackageReference Include="Microsoft.Extensions.ObjectPool" Version="8.0.*" />
 	</ItemGroup>

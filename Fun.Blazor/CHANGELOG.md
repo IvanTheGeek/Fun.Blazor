@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## 4.1.10-IvanTheGeek.3 - 2026-05-14
+
+- Switch transitive Fun.Css reference from upstream 1.0.2 to IvanTheGeek overlay (`1.0.3-IvanTheGeek.*`)
+- Reflects the divergence of the IvanTheGeek Fun.Css fork; consumers no longer need a direct Fun.Css reference to get the fork
+- Adds nuget.config listing the IvanTheGeek Forgejo feed so local + CI restore can resolve the overlay Fun.Css
+
 ## 4.1.10-IvanTheGeek.2 - 2026-05-12
 
 - Shift target frameworks: drop net6.0 (EOL 2024-11-12), add net10.0
