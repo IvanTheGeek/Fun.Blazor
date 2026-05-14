@@ -12,6 +12,7 @@ open Microsoft.AspNetCore.Components
 open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
 open Fun.Blazor
+open Fun.Css
 open Xunit
 
 

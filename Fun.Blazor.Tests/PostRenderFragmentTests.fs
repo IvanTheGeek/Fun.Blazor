@@ -7,6 +7,7 @@ open Microsoft.AspNetCore.Components.Web
 open MudBlazor
 open Fun.Blazor
 open Fun.Blazor.Operators
+open Fun.Css
 
 
 let private createBunitContext () =  new BunitContext()

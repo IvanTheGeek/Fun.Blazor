@@ -25,21 +25,15 @@ This plan covers two parallel cleanups (C and Z) plus a workflow improvement, al
 
 ## C: Patch test suite to IvanTheGeek Fun.Css API
 
-**Approach (per Q2=c):** pragmatic middle — keep tests meaningful, accept output-format drift when the new format is more correct. Update assertions if rendered CSS changes.
+**Outcome:** simpler than anticipated. No API rewrite needed — the fork's CSS CustomOperations were moved into an `[<AutoOpen>] module CssBuilderGenerated` inside `Fun.Css/CssBuilder.generated.fs`. F# only sees `[<AutoOpen>]` extension modules when the parent namespace is open. The three test files only had `open Fun.Blazor`, not `open Fun.Css`. Adding `open Fun.Css` to each made all errors disappear without any source-line changes.
 
-- [ ] Read `/home/ivan/DEVELOPMENT/Fun.Css` source to map current API
-- [ ] Document API changes in this file (see *Fun.Css API delta* section below)
-- [ ] Patch `Fun.Blazor.Tests/DomTests.fs`
-  - [ ] line 133: `style { width 10 }`
-  - [ ] line 372: `overflowHidden`
-  - [ ] line 373: `height`
-- [ ] Patch `Fun.Blazor.Tests/PostRenderFragmentTests.fs`
-  - [ ] lines 32, 43, 55: `color "red"` (3 sites)
-- [ ] Patch `Fun.Blazor.Tests/ServerTests.fs`
-  - [ ] line 94: `color` in style block
-  - [ ] line 304: `color` in ruleset block
-- [ ] Update any test assertions affected by output-format drift
-- [ ] `dotnet test Fun.Blazor.Tests/Fun.Blazor.Tests.fsproj -c Release` — all green
+- [x] Read `/home/ivan/DEVELOPMENT/Fun.Css` source — found commit [`ae1dfab`](https://forgejo.ivanthegeek.com/IvanTheGeek/Fun.Css/commit/ae1dfab) documenting the exact pattern
+- [x] Document API delta (see *Fun.Css API delta* section below)
+- [x] Patch `Fun.Blazor.Tests/DomTests.fs` — added `open Fun.Css`
+- [x] Patch `Fun.Blazor.Tests/PostRenderFragmentTests.fs` — added `open Fun.Css`
+- [x] Patch `Fun.Blazor.Tests/ServerTests.fs` — added `open Fun.Css`
+- [x] No assertion changes needed (no output-format drift)
+- [x] `dotnet test` — **52 passed, 0 failed, ~1s**
 - [ ] Commit C and update this plan
 
 ---
@@ -77,7 +71,7 @@ This plan covers two parallel cleanups (C and Z) plus a workflow improvement, al
 
 - [ ] `grep -rEn "NET6_0|NET8_0_OR_GREATER" Fun.Blazor*/*.fs Fun.Htmx/*.fs` returns zero hits
 - [ ] `dotnet build` clean across `net8.0;net9.0;net10.0`
-- [ ] `dotnet test` still green (depends on C done)
+- [ ] `dotnet test` still passes 52
 - [ ] Commit Z and update this plan
 
 ---
@@ -106,6 +100,25 @@ This plan covers two parallel cleanups (C and Z) plus a workflow improvement, al
 
 ## Fun.Css API delta
 
-_Populated during C, item 2._
+The IvanTheGeek Fun.Css fork has restructured how CSS CustomOperations are exposed: many of them moved from being direct members of `Fun.Css.CssBuilder` to being type extensions in `Fun.Css/CssBuilder.generated.fs`, inside an `[<AutoOpen>] module CssBuilderGenerated`.
 
-(empty)
+**Critical consequence for consumers:**
+
+F#'s computation-expression CustomOperation lookup only discovers `[<AutoOpen>]` extension modules when the containing namespace (`Fun.Css`) is in scope. So a consumer file that has `open Fun.Blazor` but **not** `open Fun.Css` will compile fine for direct members of CssBuilder but fail with `FS3095` ("X is not used correctly. This is a custom operation...") or `FS0039` ("X is not defined") for CSS ops that moved to the extension module.
+
+**Symptoms hit during Fun.Blazor.Tests compile:**
+
+| Site | Error | Op moved to extension |
+|---|---|---|
+| `DomTests.fs:133` `style { width 10 }` | FS3095 | yes |
+| `DomTests.fs:372` `overflowHidden` | FS0039 (not defined) | yes |
+| `DomTests.fs:373` `height "100%"` | FS3095 | yes |
+| `PostRenderFragmentTests.fs:32,43,55` `color "green"` | FS3095 | yes |
+| `ServerTests.fs:94` `color "red"` in style | FS3095 | yes |
+| `ServerTests.fs:304` `color "red"` in ruleset | FS0039 | yes |
+
+**Fix:** one-line `open Fun.Css` added to each of the three files. No call-site changes; no assertion changes. All 52 tests pass.
+
+**Reference:** Fun.Css commit [`ae1dfab`](https://forgejo.ivanthegeek.com/IvanTheGeek/Fun.Css/commit/ae1dfab) "Fix CI: add `open Fun.Css` to Benchmark so generated CE ops are visible" hit the same trap in the fork's own benchmark project.
+
+**Note for future work:** the contribution plan's caveat list (or LauraExperiment findings doc) should note this — any new F# file using the Fun.Css CSS DSL via Fun.Blazor needs both `open Fun.Blazor` AND `open Fun.Css` to see the full CE op surface.
