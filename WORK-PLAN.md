@@ -83,19 +83,20 @@ This plan covers two parallel cleanups (C and Z) plus a workflow improvement, al
 - [x] Add `Test` step to `.forgejo/workflows/publish-stable.yml` (between Build and Pack)
 - [x] Bump `Fun.Blazor/Fun.Blazor.fsproj` `<Version>` to `4.1.10-IvanTheGeek.4`
 - [x] CHANGELOG entry for `.4` (covers C + Z + CI test step)
-- [ ] Commit, push to `forgejo`
-- [ ] Verify publish-dev CI ran tests successfully
-- [ ] Verify `4.1.10-IvanTheGeek.4.<UTC-ts>` appears on Forgejo feed
-- [ ] Final plan update + commit
+- [x] Commit, push to `forgejo` (commit `5a2aa69`)
+- [x] Verify publish-dev CI ran tests successfully (Forgejo Actions API → `success`; package on feed)
+- [x] Verify `4.1.10-IvanTheGeek.4.20260514204318` appears on Forgejo feed
+- [x] Final plan update
 
 ---
 
 ## Final cleanup
 
-- [ ] Update `/home/ivan/DEVELOPMENT/Fun.Blazor-contribution-plan.md`:
-  - Add `.4` to released versions table
-  - Note CI now runs tests
-  - Remove resolved items from open questions
+- [x] Update `/home/ivan/DEVELOPMENT/Fun.Blazor-contribution-plan.md`:
+  - Added `.4` row to released versions table; `.3` marked superseded
+  - Added "Test gate" subsection
+  - Added "Fun.Css `open` requirement" caveat
+  - Refreshed sibling-TFM open question (mostly resolved by `.4`)
 
 ---
 
