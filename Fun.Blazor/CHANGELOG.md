@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## 4.1.10-IvanTheGeek.4 - 2026-05-14
+
+- C: Add `open Fun.Css` in three test files so `[<AutoOpen>]` `CssBuilderGenerated` CE ops are visible (test suite was broken under .3 with FS3095/FS0039 for color/width/height/overflowHidden — 52/52 now pass)
+- Z: Remove dead `#if !NET6_0` directives across 8 source files (25 sites) and `#if NET8_0_OR_GREATER` (1 site, also dead under net8+ matrix). Kept `#if NET9_0_OR_GREATER` sites (still meaningful since net8 doesn't satisfy).
+- Z: Remove dead `=='net6.0'` ItemGroups in Fun.Blazor.Server.fsproj and Fun.Htmx.fsproj; collapsed `!='net6.0'` conditions to unconditional
+- Sibling TFM alignment: bumped Fun.Blazor.Server, Fun.Blazor.HtmlTemplate, Fun.Htmx from `net6.0;net8.0` to `net8.0;net9.0;net10.0` (matches overlay matrix; pre-req for test suite restore)
+- CI: publish-dev.yml and publish-stable.yml now run `dotnet test` between Build and Pack so the overlay is guarded by the 52-test suite
+- Adds WORK-PLAN.md tracking the multi-step rollout
+
 ## 4.1.10-IvanTheGeek.3 - 2026-05-14
 
 - Switch transitive Fun.Css reference from upstream 1.0.2 to IvanTheGeek overlay (`1.0.3-IvanTheGeek.*`)

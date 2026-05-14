@@ -6,7 +6,7 @@
 		<TrimMode>link</TrimMode>
 		<IsTrimmable>true</IsTrimmable>
 		<PackageId>Fun.Blazor</PackageId>
-		<Version>4.1.10-IvanTheGeek.3</Version>
+		<Version>4.1.10-IvanTheGeek.4</Version>
 		<Authors>slaveOftime; IvanTheGeek</Authors>
 		<Description>Personal patched build of slaveOftime/Fun.Blazor with overlay-fork fixes pending upstream merge. Tracks upstream master with additional patches.</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>

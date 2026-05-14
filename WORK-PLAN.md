@@ -67,22 +67,22 @@ This plan covers two parallel cleanups (C and Z) plus a workflow improvement, al
 - [x] `Fun.Blazor.Server/Fun.Blazor.Server.fsproj`: dropped `=='net6.0'` block, inlined `!='net6.0'` block (became unconditional)
 - [x] `Fun.Htmx/Fun.Htmx.fsproj`: dropped `=='net6.0'` block, inlined `!='net6.0'` block
 
-### Verification
+### Verification ✓ done
 
 - [x] `grep -rEn "NET6_0|NET8_0_OR_GREATER" Fun.Blazor*/*.fs Fun.Htmx/*.fs` → zero hits
 - [x] `grep -E "net6\.0" {Server,Htmx,HtmlTemplate}.fsproj` → zero hits
 - [x] `dotnet build` clean across `net8.0;net9.0;net10.0`
 - [x] `dotnet test` → **52 passed, 0 failed**
-- [ ] Commit Z and update this plan
+- [x] Commit Z (commit `87432f7` + cleanup `f946b39` for the accidental `.claude/worktrees` submodule reference)
 
 ---
 
 ## Publish workflow + overlay 4.1.10-IvanTheGeek.4
 
-- [ ] Add `Test` step to `.forgejo/workflows/publish-dev.yml` (between Build and Pack)
-- [ ] Add `Test` step to `.forgejo/workflows/publish-stable.yml` (between Build and Pack)
-- [ ] Bump `Fun.Blazor/Fun.Blazor.fsproj` `<Version>` to `4.1.10-IvanTheGeek.4`
-- [ ] CHANGELOG entry for `.4` (covers C + Z + CI test step)
+- [x] Add `Test` step to `.forgejo/workflows/publish-dev.yml` (between Build and Pack)
+- [x] Add `Test` step to `.forgejo/workflows/publish-stable.yml` (between Build and Pack)
+- [x] Bump `Fun.Blazor/Fun.Blazor.fsproj` `<Version>` to `4.1.10-IvanTheGeek.4`
+- [x] CHANGELOG entry for `.4` (covers C + Z + CI test step)
 - [ ] Commit, push to `forgejo`
 - [ ] Verify publish-dev CI ran tests successfully
 - [ ] Verify `4.1.10-IvanTheGeek.4.<UTC-ts>` appears on Forgejo feed

@@ -18,6 +18,9 @@ jobs:
       - name: Build
         run: dotnet build Fun.Blazor/Fun.Blazor.fsproj -c Release --nologo
 
+      - name: Test
+        run: dotnet test Fun.Blazor.Tests/Fun.Blazor.Tests.fsproj -c Release --nologo
+
       - name: Pack (dev pre-release)
         run: |
           # Use UTC timestamp as the dev identifier — strictly monotonic so
