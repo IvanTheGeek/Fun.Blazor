@@ -71,6 +71,37 @@ type CountPage() =
     }
 ```
 
+## Inline styles: `open Fun.Css` required
+
+When authoring inline styles via `style { ... }` or `ruleset { ... }`, add
+`open Fun.Css` alongside `open Fun.Blazor`. Many CSS CustomOperations —
+`color`, `width`, `height`, `backgroundColor`, `fontSize`, `borderRadius`,
+`cursorPointer`, and similar — live in an `[<AutoOpen>] module
+CssBuilderGenerated` inside `Fun.Css.dll`. F#'s computation-expression
+machinery only discovers those extensions when the `Fun.Css` namespace is
+in scope at the consumer site.
+
+```fsharp
+open Fun.Blazor
+open Fun.Css
+
+let view =
+    div {
+        style { color "red"; backgroundColor "ivory"; padding 8 }
+        "Hello"
+    }
+```
+
+Without `open Fun.Css`, F# emits errors like
+`FS3095: '<op>' is not used correctly. This is a custom operation in this query or computation expression.`
+or `FS0039: The value or constructor '<op>' is not defined.`
+
+This is a consequence of the IvanTheGeek Fun.Css fork's generator-based
+packaging. Cross-assembly `[<assembly: AutoOpen("Fun.Css")>]` on Fun.Blazor
+was investigated and is non-functional for this purpose — F#'s CE
+CustomOperation resolution does not honor type extensions reached only via
+cross-assembly auto-open, so consumers must `open Fun.Css` explicitly.
+
 ## Local development
 
 You can run **dotnet fsi build.fsx -- -h** to check what is available to help you get started.

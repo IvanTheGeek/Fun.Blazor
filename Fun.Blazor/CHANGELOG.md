@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## 4.1.10-IvanTheGeek.5 - 2026-05-14
+
+- README: document the `open Fun.Css` requirement for consumers using the inline-style CE blocks (`style { ... }` / `ruleset { ... }`). The IvanTheGeek Fun.Css fork moved many CSS CustomOperations into an `[<AutoOpen>] module CssBuilderGenerated`; F# CE machinery only discovers those when `Fun.Css` is explicitly opened at the consumer site.
+- Investigated cross-assembly `[<assembly: AutoOpen("Fun.Css")>]` to make this transparent for consumers (recommended in the original brief). Empirically non-functional — F# CE CustomOperation resolution doesn't honor type extensions reached via cross-assembly auto-open. Reverted; consumers must `open Fun.Css` explicitly. Documented in the README and in `Fun.Blazor-contribution-plan.md`.
+- Binary unchanged from `.4`.
+
 ## 4.1.10-IvanTheGeek.4 - 2026-05-14
 
 - C: Add `open Fun.Css` in three test files so `[<AutoOpen>]` `CssBuilderGenerated` CE ops are visible (test suite was broken under .3 with FS3095/FS0039 for color/width/height/overflowHidden — 52/52 now pass)
